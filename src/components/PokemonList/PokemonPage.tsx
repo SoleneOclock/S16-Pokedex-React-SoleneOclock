@@ -1,20 +1,22 @@
-// import du hook useParams de react-router-dom pour recuperer les valeurs des params dynamiques de l'URL
-// import aussi du composant Navigate qui va changer l'URL dès qu'il sera rendu
+/* import des outils de react-router-dom
+- hook useParams : pour recuperer les valeurs des params dynamiques de l'URL
+- composant Navigate : pour changer l'URL dès qu'il sera rendu
+*/
 import { useParams, Navigate } from "react-router-dom";
 import { IPokemon } from "../../@types/pokemon";
+import PageBorder from "../PageBorder/PageBorder";
 
 interface PokemonPageProps {
   allPokemons: IPokemon[];
 }
 
-// cet composant est affiché quand l'url est de type /pokemon/:pokedex_Id
-// don celle va etre affiché autant pour :
+// ce composant est affiché quand l'url est de type /pokemon/:pokedex_Id
+// donc elle va etre affiché par exemple pour :
 // - /pokemon/1 -> afficher les infos du pokemon 1
 // - /pokemon/toto -> rediriger vers la page erreur
 
 export default function PokemonPage({ allPokemons }: PokemonPageProps) {
-  // il faudrait recuperer l'identifiant dans l'URL pour savoir quel pokemon afficher !!
-  // on va utiliser la fonction useParmas de react-router-dom qui donne les valeurs des paramètres dynamiques de l'URL
+  // avec useParams on récupère l'identifiant dans l'URL pour savoir quel pokemon afficher !!
   const params = useParams();
   const urlPodemonId = params.pokedex_id;
 
@@ -36,13 +38,12 @@ export default function PokemonPage({ allPokemons }: PokemonPageProps) {
     return <Navigate to="/error" replace={true} />;
   }
   return (
-    <div className="p-4">
-      <h2 className="text-xl">{pokemonToDisplay.name.fr}</h2>
+    <PageBorder title={pokemonToDisplay.name.fr}>
       <img src={pokemonToDisplay.sprites.shiny} className="w-40" />
       liste des talents :
       {pokemonToDisplay.talents.map((talent) => (
         <span key={talent.name}>{talent.name}</span>
       ))}
-    </div>
+    </PageBorder>
   );
 }

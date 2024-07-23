@@ -1,9 +1,10 @@
+import PageBorder from "../PageBorder/PageBorder";
+
 function NotFoundPage() {
   return (
-    <div className="p-4">
-      <h2 className="text-xl">404</h2>
+    <PageBorder title="404">
       <p>Page non trouvée</p>
-    </div>
+    </PageBorder>
   );
 }
 

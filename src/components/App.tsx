@@ -1,8 +1,10 @@
-// LINK va remplacer dans le JSX les <a>
-// ça va faire des liens qui quand on clique dessus on ne change pas de page (pas de nouvelle requette HTTP) mais l'url change quand même (pushState de l'API history html)
-// NAVLINK : tout comme Link mais ajoute une classe "active" sur le lien si l'url correspond à la valeur de sa prop "to"
-// ROUTES qui emglobe toutes les Route (sans S)
-// ROUTE est un mapping entre une URL et un element JSX
+/* import des composants de react-router-dom
+- LINK va remplacer dans le JSX tous les <a>
+  ça va faire des liens qui quand on clique dessus ne changent pas de page (pas de nouvelle requette HTTP) mais l'url change quand même (pushState de l'API history html5)
+- NAVLINK : tout comme Link mais ajoute une classe "active" sur le lien si l'url correspond à la valeur de sa prop "to"
+- ROUTES qui emglobe toutes les Route (sans S)
+- ROUTE est un mapping entre une URL et un element JSX
+*/
 import { Link, NavLink, Route, Routes } from "react-router-dom";
 
 import axios from "axios";
@@ -28,18 +30,18 @@ function App() {
   useEffect(() => {
     const fetchPokemons = async () => {
       try {
-        // fetch les données
+        // on fetch l'API
         const response = await axios.get(
           "https://tyradex.vercel.app/api/v1/pokemon"
         );
-        console.log(response);
 
-        // on a recupéré les pokemosn de l'APi on va les enregistrer dans le state
-        // le state est affcihé sur la page
+        // on recupère les pokemons
         const pokemonArray = response.data;
-        // on vire le premier pokemon avant de les enregistrer dans le state pke c'est le bug avec tout à null
+
+        // on vire le premier pke c'est le bug avec tout à null
         pokemonArray.shift();
 
+        // on enregistre les pokemons dans le state
         setPokemons(pokemonArray);
       } catch (e) {
         console.log("erreur");
