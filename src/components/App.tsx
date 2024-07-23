@@ -1,3 +1,10 @@
+// import du composant Link de react-router-dom
+// on va l'utiliser dans le JSX à  la place des <a>
+// ça va faire des leins qui quand on clique dessus on ne change pas de page (pas de nouvelle requette HTTP) mais l'url change quand même (pushState de l'API history html)
+// import de Routes qui emglobe toutes les Route (sans S)
+// une route est un mapping entre une URL et un element JSX
+import { Link, Route, Routes } from "react-router-dom";
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "feather-icons-react";
@@ -6,6 +13,8 @@ import { Moon, Sun } from "feather-icons-react";
 import { IPokemon } from "../@types/pokemon";
 import PokemonList from "./PokemonList/PokemonList";
 import logo from "../assets/logo.png";
+import AboutPage from "./AboutPage/AboutPage";
+import NotFoundPage from "./NotFoundPage/NotFoundPage";
 
 function App() {
   // STATE pour stocker un tableau d'objet Pokemon
@@ -39,24 +48,18 @@ function App() {
   }, []);
 
   return (
-    <div className={isDark ? "bg-slate-800 text-zinc-50" : "bg-slate-100"}>
+    <div
+      className={
+        isDark ? "bg-slate-800 text-zinc-50 h-lvh" : "bg-slate-100 h-lvh"
+      }
+    >
       <nav className="flex items-center justify-around p-2">
-        <a href="/" className="w-3/4">
+        <Link to="/" className="w-3/4">
           <img src={logo} className="w-32" />
-        </a>
-        <a
-          href="/about"
-          className="w-32"
-          onClick={(e) => {
-            // ce serait bien que tous nos liens ne fasse pas de requette HTTP vers le serveur : on est en SPA
-            e.preventDefault();
-
-            // on va pas changer de page MAIS on va modifier l'URL (un faux changement)
-            history.pushState({}, "", "/about");
-          }}
-        >
+        </Link>
+        <Link to="/about" className="w-32">
           About us
-        </a>
+        </Link>
         <button
           onClick={() => {
             setIsDark(!isDark);
@@ -68,7 +71,12 @@ function App() {
       <h1 className="text-purple-600 text-3xl text-center mb-6">
         Pokedex React
       </h1>
-      <PokemonList pokemons={pokemons} />
+
+      <Routes>
+        <Route path="/" element={<PokemonList pokemons={pokemons} />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </div>
   );
 }
