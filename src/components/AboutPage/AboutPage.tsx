@@ -1,3 +1,5 @@
+// ce composant est affiché sur l'URL est /about
+
 function AboutPage() {
   return (
     <div className="p-4">

@@ -1,9 +1,9 @@
-// import du composant Link de react-router-dom
-// on va l'utiliser dans le JSX à  la place des <a>
-// ça va faire des leins qui quand on clique dessus on ne change pas de page (pas de nouvelle requette HTTP) mais l'url change quand même (pushState de l'API history html)
-// import de Routes qui emglobe toutes les Route (sans S)
-// une route est un mapping entre une URL et un element JSX
-import { Link, Route, Routes } from "react-router-dom";
+// LINK va remplacer dans le JSX les <a>
+// ça va faire des liens qui quand on clique dessus on ne change pas de page (pas de nouvelle requette HTTP) mais l'url change quand même (pushState de l'API history html)
+// NAVLINK : tout comme Link mais ajoute une classe "active" sur le lien si l'url correspond à la valeur de sa prop "to"
+// ROUTES qui emglobe toutes les Route (sans S)
+// ROUTE est un mapping entre une URL et un element JSX
+import { Link, NavLink, Route, Routes } from "react-router-dom";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import PokemonList from "./PokemonList/PokemonList";
 import logo from "../assets/logo.png";
 import AboutPage from "./AboutPage/AboutPage";
 import NotFoundPage from "./NotFoundPage/NotFoundPage";
+import PokemonPage from "./PokemonList/PokemonPage";
 
 function App() {
   // STATE pour stocker un tableau d'objet Pokemon
@@ -57,9 +58,15 @@ function App() {
         <Link to="/" className="w-3/4">
           <img src={logo} className="w-32" />
         </Link>
-        <Link to="/about" className="w-32">
+        <NavLink
+          to="/about"
+          className={({ isActive }) => {
+            // la callback prend en param un objet qu'on destructure pour ne garder que isActive et on return la classe qu'on veut appliquer au lien en fonction de isActive
+            return isActive ? "underline" : "";
+          }}
+        >
           About us
-        </Link>
+        </NavLink>
         <button
           onClick={() => {
             setIsDark(!isDark);
@@ -75,6 +82,11 @@ function App() {
       <Routes>
         <Route path="/" element={<PokemonList pokemons={pokemons} />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route
+          path="/pokemon/:pokedex_id"
+          element={<PokemonPage allPokemons={pokemons} />}
+        />
+        <Route path="/error" element={<NotFoundPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
