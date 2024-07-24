@@ -11,17 +11,24 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "feather-icons-react";
 
-// import de notre interface
+// import de nos interfaces
 import { IPokemon } from "../@types/pokemon";
+import { IType } from "../@types/type";
+
+// import des sous composants
 import PokemonList from "./PokemonList/PokemonList";
 import logo from "../assets/logo.png";
 import AboutPage from "./AboutPage/AboutPage";
 import NotFoundPage from "./NotFoundPage/NotFoundPage";
 import PokemonPage from "./PokemonList/PokemonPage";
+import TypePage from "./TypePage/TypePage";
 
 function App() {
   // STATE pour stocker un tableau d'objet Pokemon
   const [pokemons, setPokemons] = useState<IPokemon[]>([]);
+
+  // STATE pour stocker les types
+  const [types, setTypes] = useState<IType[]>([]);
 
   // STATE pour stocker l'état du mode couleur
   const [isDark, setIsDark] = useState(false);
@@ -48,6 +55,21 @@ function App() {
       }
     };
     fetchPokemons();
+
+    const fetchTypes = async () => {
+      try {
+        const response = await axios.get("https://tyradex.tech/api/v1/types");
+
+        // il faut loguer la response absoluement pour voir ce qu'on reçoit et trouver ou sont les données qui nous interessent
+        //console.log(response);
+
+        // les types sont dans response.data on enregistre le tableau des types dans le state
+        setTypes(response.data);
+      } catch (e) {
+        console.log("erreur");
+      }
+    };
+    fetchTypes();
   }, []);
 
   return (
@@ -77,6 +99,19 @@ function App() {
           {isDark ? <Sun /> : <Moon />}
         </button>
       </nav>
+
+      <div className="flex flex-wrap gap-4 m-4">
+        {types.map((type) => (
+          <NavLink
+            to={`/type/${type.id}`}
+            key={type.id}
+            className="bg-rose-400 rounded p-1 hover:bg-teal-500"
+          >
+            {type.name.fr}
+          </NavLink>
+        ))}
+      </div>
+
       <h1 className="text-purple-600 text-3xl text-center mb-6">
         Pokedex React
       </h1>
@@ -87,6 +122,10 @@ function App() {
         <Route
           path="/pokemon/:pokedex_id"
           element={<PokemonPage allPokemons={pokemons} />}
+        />
+        <Route
+          path="/type/:type_id"
+          element={<TypePage types={types} pokemons={pokemons} />}
         />
         <Route path="/error" element={<NotFoundPage />} />
         <Route path="*" element={<NotFoundPage />} />

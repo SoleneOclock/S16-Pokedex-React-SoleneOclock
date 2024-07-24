@@ -7,10 +7,8 @@ interface PokemonListProps {
 }
 
 function PokemonList({ pokemons }: PokemonListProps) {
-  console.log(pokemons);
-
   return (
-    <div className="flex flex-wrap gap-2 justify-around">
+    <div className="flex flex-wrap gap-2 justify-between">
       {pokemons.map((pokemon) => (
         <Link
           to={`/pokemon/${pokemon.pokedex_id}`}
