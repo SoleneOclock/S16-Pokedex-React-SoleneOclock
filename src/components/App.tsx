@@ -33,6 +33,12 @@ function App() {
   // STATE pour stocker l'état du mode couleur
   const [isDark, setIsDark] = useState(false);
 
+  // STATE pour stocker l'etat de loading :
+  // il est à true tant que les state pokemon et types contiennent des tableaux vides
+  // on le passe à false dès que les données sont enregistrées en state
+  // on s'en sert pour conditionner l'affichage des routes
+  const [isLoading, setIsLoading] = useState(true);
+
   // après le premier chargement de la page on va fetch les données et on les placent dans le state
   useEffect(() => {
     const fetchPokemons = async () => {
@@ -54,8 +60,6 @@ function App() {
         console.log("erreur");
       }
     };
-    fetchPokemons();
-
     const fetchTypes = async () => {
       try {
         const response = await axios.get("https://tyradex.tech/api/v1/types");
@@ -69,7 +73,11 @@ function App() {
         console.log("erreur");
       }
     };
-    fetchTypes();
+
+    // on lance en parallèle les 2 fetchs et quand ils sont terminés tous les 2 on passe le loader à false
+    Promise.all([fetchPokemons(), fetchTypes()]).then(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   return (
@@ -116,20 +124,31 @@ function App() {
         Pokedex React
       </h1>
 
-      <Routes>
-        <Route path="/" element={<PokemonList pokemons={pokemons} />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route
-          path="/pokemon/:pokedex_id"
-          element={<PokemonPage allPokemons={pokemons} />}
-        />
-        <Route
-          path="/type/:type_id"
-          element={<TypePage types={types} pokemons={pokemons} />}
-        />
-        <Route path="/error" element={<NotFoundPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      {
+        // on créé les routes QUE si on est pas en train de loader
+        // sinon au premier rendu sur l'URL /pokemon/215
+        // la PokemonPage ne trouvera pas le pokemon 215 dans le state
+        // (puisqu'on aura pas encore rempli le state, au premier rendu c'est un tableau vide)
+        // donc il ne faut pas match cette URL tant qu'on a pas les données (tant que isLoading est true)
+        isLoading ? (
+          <p>loading...</p>
+        ) : (
+          <Routes>
+            <Route path="/" element={<PokemonList pokemons={pokemons} />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route
+              path="/pokemon/:pokedex_id"
+              element={<PokemonPage allPokemons={pokemons} />}
+            />
+            <Route
+              path="/type/:type_id"
+              element={<TypePage types={types} pokemons={pokemons} />}
+            />
+            <Route path="/error" element={<NotFoundPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        )
+      }
     </div>
   );
 }
