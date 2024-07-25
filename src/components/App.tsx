@@ -9,7 +9,6 @@ import { Link, NavLink, Route, Routes } from "react-router-dom";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "feather-icons-react";
 
 // import de nos interfaces
 import { IPokemon } from "../@types/pokemon";
@@ -75,6 +74,8 @@ function App() {
     };
 
     // on lance en parallèle les 2 fetchs et quand ils sont terminés tous les 2 on passe le loader à false
+    // https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+    // Promise.all prends en paramètre un tableau de promesses et renvoie une promesse résolue quand elles sont toutes résolues.
     Promise.all([fetchPokemons(), fetchTypes()]).then(() => {
       setIsLoading(false);
     });
@@ -104,7 +105,7 @@ function App() {
             setIsDark(!isDark);
           }}
         >
-          {isDark ? <Sun /> : <Moon />}
+          {isDark ? "soleil" : "lune"}
         </button>
       </nav>
 
